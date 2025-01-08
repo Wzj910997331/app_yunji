@@ -42,12 +42,12 @@ AX_BOOL CAudio::Init() {
         return AX_FALSE;
     }
 
-    audio_files_ = std::make_unique<CAXLockQ<std::string>>();
-    if (!audio_files_) {
+    audio_files = std::make_unique<CAXLockQ<std::string>>();
+    if (!audio_files) {
         LOG_MM_E(AUDIO, "alloc queue fail");
         return AX_FALSE;
     } else {
-        audio_files_->SetCapacity(32);
+        audio_files->SetCapacity(32);
     }
 
     LOG_M_D(AUDIO, "%s: ---", __func__);
@@ -77,8 +77,8 @@ AX_BOOL CAudio::Start(AX_VOID) {
 }
 
 AX_BOOL CAudio::Stop(AX_VOID) {
-    if (audio_files_) {
-        audio_files_->Wakeup();
+    if (audio_files) {
+        audio_files->Wakeup();
     }
 
     m_PlayThread.Stop();
@@ -163,9 +163,9 @@ AX_S32 CAudio::ParseWaveHeader(uint16_t *bits_per_sample) {
 // 播放音频
 AX_VOID CAudio::WorkThread(AX_VOID* pArg) {
     while (m_PlayThread.IsRunning()) {
-        while (audio_files_->GetCount()) {
+        while (audio_files->GetCount()) {
             std::string file;
-            audio_files_->Pop(file);
+            audio_files->Pop(file);
             m_stAttr.audio_file = file;
 
             if (access(m_stAttr.audio_file.c_str(), F_OK)) {
@@ -336,7 +336,7 @@ AX_VOID CAudio::SendData() {
 AX_BOOL CAudio::PlayAudio(std::string file) {
     LOG_M_C(AUDIO, "%s: +++", __func__);
 
-    if (!audio_files_->Push(file)) {
+    if (!audio_files->Push(file)) {
         LOG_M_E(AUDIO, "push file %s failed", file.c_str());
     }
 

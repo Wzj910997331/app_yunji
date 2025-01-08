@@ -98,5 +98,5 @@ protected:
     std::ifstream m_ifs;
     CAXThread m_PlayThread;
 
-    std::unique_ptr<CAXLockQ<std::string>> audio_files_;
+    std::unique_ptr<CAXLockQ<std::string>> audio_files;
 };
